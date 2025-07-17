@@ -1,12 +1,13 @@
 import React, { useState, useMemo } from 'react';
 import styled from 'styled-components';
 
+// Components
+
 const NewsContainer = styled.div`
   width: 100%;
   display: flex;
   flex-direction: column;
-  gap: 32px;
-  margin-bottom: 20px;
+  gap: 20px;
   padding: 20px;
   background: rgba(255, 255, 255, 0.06);
   border: 1px solid rgba(255, 255, 255, 0.12);
@@ -90,7 +91,7 @@ const HTMLContent = styled.div`
 
 const ExpandableSection = styled.div`
   overflow: hidden;
-  max-height: ${({ expanded }) => (expanded ? '1000px' : '0')};
+  max-height: ${({ expanded }) => (expanded ? 'auto' : '0')};
   opacity: ${({ expanded }) => (expanded ? '1' : '0')};
   transition: all 0.5s ease;
 `;
@@ -125,7 +126,7 @@ const ImageWrapper = styled.div`
   }
 
   &::-webkit-scrollbar-thumb {
-    background-color: rgba(255, 255, 255, 0.2);
+    background-color: rgba(0, 225, 255, 0.2);
     border-radius: 4px;
   }
 
@@ -142,6 +143,30 @@ const ImageWrapper = styled.div`
     border: 1px solid rgba(255, 255, 255, 0.1);
   }
 `;
+
+const TagSection = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: -8px;
+`;
+
+const Button = styled.div`
+  display: flex;
+  background-color: rgba(25, 90, 255, 0.16);
+  justify-content: center;
+  align-items: center;
+  border-radius: 4px;
+  padding: 6px 8px;
+`;
+
+const ButtonText = styled.h1`
+  font-size: 13px;
+  font-weight: 500;
+  color: #6A94FF;
+  margin: 0;
+`;
+
 
 
 const News = ({ newsData }) => {
@@ -167,6 +192,16 @@ const News = ({ newsData }) => {
     <NewsContainer>
       <Title>{newsData.title}, Pg6</Title>
 
+      {newsData.tags && newsData.tags.length > 0 && (
+        <TagSection>
+          {newsData.tags.map((tag, index) => (
+            <Button key={index}>
+              <ButtonText>{tag}</ButtonText>
+            </Button>
+          ))}
+        </TagSection>
+      )}
+
       <Section>
         <Heading>Context</Heading>
         <ContextContent>
@@ -174,7 +209,9 @@ const News = ({ newsData }) => {
         </ContextContent>
       </Section>
 
-      <Section style={{marginTop: '-16px'}}>
+
+
+      <Section style={{ marginTop: '-16px' }}>
         {showFullContent && (
           <ExpandableSection expanded={showFullContent}>
             <HTMLContent dangerouslySetInnerHTML={{ __html: section1 }} />

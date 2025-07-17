@@ -24,7 +24,7 @@ const Main = styled.div`
   padding: 0px 100px;
   flex-direction: column;
   width: 60%;
-  gap: 40px;
+  gap: 30px;
 `
 
 const Home = () => {

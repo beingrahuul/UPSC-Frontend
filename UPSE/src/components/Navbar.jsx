@@ -80,7 +80,7 @@ const ComingSoonBadge = styled.div`
   text-align: center;
   padding: 2px 6px;
   border-radius: 4px;
-  background-color: rgba(106, 148, 255, 0.50);
+  background-color: rgba(106, 148, 255, 0.5);
 `;
 
 
