@@ -23,7 +23,7 @@ const Main = styled.div`
   display: flex;
   padding: 0px 100px;
   flex-direction: column;
-  width: 50%;
+  width: 60%;
   gap: 40px;
 `
 
@@ -38,7 +38,7 @@ const Home = () => {
     const fetchData = async () => {
       setLoading(true)
       try {
-        const response = await fetch('http://localhost:8080/api/news/', {
+        const response = await fetch('https://upscnews.onrender.com/api/news/', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -74,7 +74,7 @@ const Home = () => {
             <News key={article._id} newsData={article} />
           ))
         ) : (
-          <p>No articles found for this date.</p>
+          <ErrorMessage message="No articles found for this date." />
         )}
 
       </Main>

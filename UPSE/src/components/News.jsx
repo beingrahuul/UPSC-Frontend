@@ -1,4 +1,4 @@
-import {useState} from 'react';
+import React, { useState, useMemo } from 'react';
 import styled from 'styled-components';
 
 const NewsContainer = styled.div`
@@ -6,10 +6,17 @@ const NewsContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: 32px;
+  margin-bottom: 20px;
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 16px;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
 `;
 
 const Title = styled.h1`
-  font-size: 28px;
+  font-size: 36px;
   font-weight: 600;
   color: #fff;
   margin: 0;
@@ -39,53 +46,156 @@ const ContextContent = styled.div`
   line-height: 1.6;
 `;
 
-const HighlightsList = styled.ul`
+const HTMLContent = styled.div`
   font-size: 16px;
   font-weight: 400;
   color: #ddd;
-  padding-left: 20px;
-  margin: 0;
+  line-height: 1.6;
+
+  h3, h2 {
+    color: #fff;
+    font-weight: 600;
+    margin: 20px 0;
+  }
+
+  ol, ul {
+    padding-left: 20px;
+    margin: 12px 0;
+  }
 
   li {
     margin-bottom: 12px;
-    line-height: 1.6;
+  }
 
-    a {
-      color: #4A7AFF;
-      text-decoration: underline;
-      &:hover {
-        text-decoration: none;
-      }
+  strong {
+    color: #fff;
+  }
+
+  br {
+    margin: 0;
+  }
+
+  p {
+    margin: 0;
+  }
+
+  a {
+    color: #4A7AFF;
+    text-decoration: underline;
+    &:hover {
+      text-decoration: none;
     }
   }
 `;
 
-const News = ({news}) => {
+const ExpandableSection = styled.div`
+  overflow: hidden;
+  max-height: ${({ expanded }) => (expanded ? '1000px' : '0')};
+  opacity: ${({ expanded }) => (expanded ? '1' : '0')};
+  transition: all 0.5s ease;
+`;
 
+const ReadMoreButton = styled.button`
+  background-color: transparent;
+  border: 1px solid #4A7AFF;
+  color: #4A7AFF;
+  border-radius: 8px;
+  padding: 8px 16px;
+  font-weight: 500;
+  cursor: pointer;
+  align-self: center;
+  margin-top: 8px;
+
+  &:hover {
+    background-color: #4A7AFF;
+    color: #fff;
+  }
+`;
+
+const ImageWrapper = styled.div`
+  display: flex;
+  flex-direction: row;
+  overflow-x: auto;
+  gap: 16px;
+  padding: 16px;
+  margin-top: -16px;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 255, 255, 0.2);
+    border-radius: 4px;
+  }
+
+  img {
+    flex-shrink: 0;
+    border-radius: 12px;
+    height: auto;
+    max-width: 400px;
+    height: auto;
+    object-fit: cover;
+    max-height: 300px;
+    width: auto;
+    object-fit: contain;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+`;
+
+
+const News = ({ newsData }) => {
+  const [showFullContent, setShowFullContent] = useState(false);
+  console.log(newsData);
+
+  const { section1, section2, section3 } = useMemo(() => {
+    const parts = newsData.content.split(/(?=<h2.*?>)/g); // Split at <h2> start tag
+    return {
+      section1: parts[0] || '',
+      section2: parts[1] || '',
+      section3: parts.slice(2).join('') || '',
+    };
+  }, [newsData.content]);
+
+  const images = Array.isArray(newsData.image)
+    ? newsData.image
+    : newsData.image
+      ? [newsData.image]
+      : [];
 
   return (
     <NewsContainer>
-      <Title>
-        Practising Equality in Constitutional Courts, Pg 8
-      </Title>
+      <Title>{newsData.title}, Pg6</Title>
 
       <Section>
         <Heading>Context</Heading>
         <ContextContent>
-          The Supreme Court’s recent ruling in <strong>Jitender @ Kalla vs State (Govt.) of NCT Of Delhi (2025)</strong> revisited the criteria for designating senior advocates — a long-debated system that continues to raise concerns about systemic elitism in India’s legal fraternity.
+          {newsData.context || 'No context available for this article.'}
         </ContextContent>
       </Section>
 
-      <Section>
-        <Heading>Key Highlights</Heading>
-        <HighlightsList>
-          <li>
-            The Supreme Court upheld <a href="#">Section 16 of the Advocates Act, 1961</a>, maintaining the classification between senior advocates and advocates.
-          </li>
-          <li>
-            While acknowledging subjectivity in the point-based designation system, the Court opted to retain the current application process with minor procedural reforms.
-          </li>
-        </HighlightsList>
+      <Section style={{marginTop: '-16px'}}>
+        {showFullContent && (
+          <ExpandableSection expanded={showFullContent}>
+            <HTMLContent dangerouslySetInnerHTML={{ __html: section1 }} />
+            <HTMLContent dangerouslySetInnerHTML={{ __html: section2 }} />
+            <HTMLContent dangerouslySetInnerHTML={{ __html: section3 }} />
+            {images.length > 0 && (
+              <ImageWrapper>
+                {images.map((src, idx) => (
+                  <img key={idx} src={src} alt={`News image ${idx + 1}`} />
+                ))}
+              </ImageWrapper>
+            )}
+          </ExpandableSection>
+
+        )}
+
+        {(section2 || section3) && (
+          <ReadMoreButton onClick={() => setShowFullContent(!showFullContent)}>
+            {showFullContent ? 'Show Less' : 'Read More'}
+          </ReadMoreButton>
+        )}
       </Section>
     </NewsContainer>
   );
