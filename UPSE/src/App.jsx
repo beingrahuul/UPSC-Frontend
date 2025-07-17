@@ -1,7 +1,8 @@
 // App.jsx
-import { useState } from 'react';
-import {BrowserRouter, Route, Routes} from 'react-router-dom';
-import styled from 'styled-components';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
+
+//context 
+import { DateProvider } from './context/DateContext';
 
 //pages
 import Home from './Page/Home.jsx';
@@ -12,14 +13,15 @@ import Navbar from './components/Navbar.jsx';
 
 
 const App = () => {
-  const [showCalendar, setShowCalendar] = useState(false);
 
   return (
     <BrowserRouter>
-      <Navbar />
-      <Routes>
-        <Route path="/" element={<Home />} />
-      </Routes>
+      <DateProvider>
+        <Navbar />
+        <Routes>
+          <Route path="/" element={<Home />} />
+        </Routes>
+      </DateProvider>
     </BrowserRouter>
   );
 };

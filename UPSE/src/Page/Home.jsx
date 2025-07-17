@@ -1,10 +1,16 @@
-import React from 'react'
+import { useState, useEffect, useContext } from 'react';
 import styled from 'styled-components';
 
 //components
 import Topics from '../components/Topics';
 import Date from "../components/Date"
 import News from "../components/News";
+import Loader from '../components/Loader';
+import ErrorMessage from '../components/ErrorMessage';
+
+//context
+import { DateContext } from '../context/DateContext';
+
 
 
 const Container = styled.div`
@@ -22,13 +28,55 @@ const Main = styled.div`
 `
 
 const Home = () => {
+
+  const [newsData, setNewsData] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const { selectedDate } = useContext(DateContext);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true)
+      try {
+        const response = await fetch('http://localhost:8080/api/news/', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ date: selectedDate.toISOString() }),
+        });
+
+        const data = await response.json()
+        setNewsData(data)
+
+      } catch (error) {
+        console.error('Error fetching news data:', error);
+        setError(error.message)
+      } finally {
+        setLoading(false)
+      }
+    };
+    fetchData();
+  }, [selectedDate]);
+
   return (
     <Container>
       <Topics />
       <Main>
         <Date />
 
-        <News />
+        {loading ? (
+          <Loader />
+        ) : error ? (
+          <ErrorMessage message={error} />
+        ) : newsData.length > 0 ? (
+          newsData.map((article) => (
+            <News key={article._id} newsData={article} />
+          ))
+        ) : (
+          <p>No articles found for this date.</p>
+        )}
+
       </Main>
     </Container>
   )

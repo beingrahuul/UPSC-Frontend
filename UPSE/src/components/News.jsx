@@ -1,4 +1,4 @@
-import React from 'react';
+import {useState} from 'react';
 import styled from 'styled-components';
 
 const NewsContainer = styled.div`
@@ -60,7 +60,9 @@ const HighlightsList = styled.ul`
   }
 `;
 
-const News = () => {
+const News = ({news}) => {
+
+
   return (
     <NewsContainer>
       <Title>

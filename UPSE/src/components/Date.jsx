@@ -1,10 +1,11 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useContext } from 'react';
 import styled from 'styled-components';
 import Calendar from './Calendar';
 
 //icons
 import CalenderIcon from '../assets/icons/calander.svg';
 import { FiChevronLeft, FiChevronRight } from 'react-icons/fi';
+import { DateContext } from '../context/DateContext';
 
 const DateRow = styled.div`
   width: 100%;
@@ -91,7 +92,7 @@ const getDayName = (date) => {
 };
 
 const DateComponent = () => {
-  const [currentDate, setCurrentDate] = useState(new Date());
+  const { selectedDate, setSelectedDate } = useContext(DateContext);
   const [showCalendar, setShowCalendar] = useState(false);
 
   const calendarRef = useRef();
@@ -114,23 +115,23 @@ const DateComponent = () => {
   }, []);
 
   const handlePrevDate = () => {
-    const prev = new Date(currentDate);
+    const prev = new Date(selectedDate);
     prev.setDate(prev.getDate() - 1);
-    setCurrentDate(prev);
+    setSelectedDate(prev);
   };
 
   const handleNextDate = () => {
-    const next = new Date(currentDate);
+    const next = new Date(selectedDate);
     next.setDate(next.getDate() + 1);
-    if (next <= new Date()) setCurrentDate(next);
+    if (next <= new Date()) setSelectedDate(next);
   };
 
   const handleDateSelect = (date) => {
-    setCurrentDate(date);
+    setSelectedDate(date);
     setShowCalendar(false);
   };
 
-  const isToday = currentDate.toDateString() === new Date().toDateString();
+  const isToday = selectedDate.toDateString() === new Date().toDateString();
 
   return (
     <DateRow>
@@ -143,7 +144,7 @@ const DateComponent = () => {
           <CalendarPopup>
             <Calendar
               ref={calendarRef}
-              selectedDate={currentDate}
+              selectedDate={selectedDate}
               setSelectedDate={handleDateSelect}
             />
           </CalendarPopup>
@@ -154,7 +155,7 @@ const DateComponent = () => {
             <FiChevronLeft />
           </IconButton>
 
-          <DateText>{formatDate(currentDate)}</DateText>
+          <DateText>{formatDate(selectedDate)}</DateText>
 
           <IconButton onClick={!isToday ? handleNextDate : undefined} disabled={isToday}>
             <FiChevronRight/>
@@ -163,7 +164,7 @@ const DateComponent = () => {
       </Left>
 
       <Right>
-        <DayText>{getDayName(currentDate)}</DayText>
+        <DayText>{getDayName(selectedDate)}</DayText>
       </Right>
     </DateRow>
   );
