@@ -1,27 +1,27 @@
 // App.jsx
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 
-//context 
+// context 
 import { DateProvider } from './context/DateContext';
+import { UserProvider } from './context/UserContext';
 
-//pages
+// pages
 import Home from './Page/Home.jsx';
 
-//components
+// components
 import Navbar from './components/Navbar.jsx';
 
-
-
 const App = () => {
-
   return (
     <BrowserRouter>
-      <DateProvider>
-        <Navbar />
-        <Routes>
-          <Route path="/" element={<Home />} />
-        </Routes>
-      </DateProvider>
+      <UserProvider>
+        <DateProvider>
+          <Navbar />
+          <Routes>
+            <Route path="/" element={<Home />} />
+          </Routes>
+        </DateProvider>
+      </UserProvider>
     </BrowserRouter>
   );
 };

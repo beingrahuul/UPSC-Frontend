@@ -174,7 +174,7 @@ const News = ({ newsData }) => {
   console.log(newsData);
 
   const { section1, section2, section3 } = useMemo(() => {
-    const parts = newsData.content.split(/(?=<h2.*?>)/g); // Split at <h2> start tag
+    const parts = newsData.content.split(/(?=<h2.*?>)/g);
     return {
       section1: parts[0] || '',
       section2: parts[1] || '',
